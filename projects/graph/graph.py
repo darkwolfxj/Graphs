@@ -72,37 +72,7 @@ class Graph:
                 # add all of the neighbors to the stack
                 for vertex in self.get_neighbors(current_vertex):
                     s.push(vertex) 
-    def print_bs(self):
-        print("bs")
-    def dft_y_a(self, starting_vertex):
-        # establish a list of paths
-        paths = []
-        # establish a stack
-        s = Stack()
-        # establish visited
-        visited = set()
-        # add path to starting vertex to stack if stack is empty
-        if s.size() == 0:
-            s.push([starting_vertex])
-        # until stack is empty
-        while s.size() > 0:
-        ## set current_vertex to last item in stack
-            current_path = s.pop()
-            current_vertex = current_path[-1]
-        ### if the current_vertex hasn't been visited, add it to visited
-            if current_vertex not in visited:
-                # add it to visited
-                visited.add(current_vertex)
-                new_path = current_path + [current_vertex]
-                s.push(new_path)
-        ### if len(g.get_neighbors(current_vertex)) == 0 append current_path to list of paths
-                if len(self.get_neighbors(current_vertex)) == 0:
-                    paths.append(current_path)
-        # filter list of paths by greatest length
-        filteredbylength = filter(paths, lambda x: len(x) == max(paths, lambda x: len(x)))
-        print(filteredbylength)
-        # filter list of paths by least path[-1]
-        # return filtered list
+  
     def dft_recursive_utils(self, v, visited):
         # add a the vertex to the visited set and print it
         visited[v[-1]] = True
