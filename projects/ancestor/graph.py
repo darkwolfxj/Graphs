@@ -57,13 +57,13 @@ class Graph:
         """
         # establish a stack
         s = Stack()
-        # add starting vertex to stack
+        # add starting vertex to queue
         s.push(starting_vertex)
         # create a set of vertexes visited
         visited = set()
         # until stack is empty
         while s.size() > 0:
-            # set current_vertex to the last item in the stack
+            # set current_vertex to the first item in the stack
             current_vertex = s.pop()
             if current_vertex not in visited:
                 # if the current_vertex hasn't been visited, print it and add it to visited
@@ -71,7 +71,7 @@ class Graph:
                 visited.add(current_vertex)
                 # add all of the neighbors to the stack
                 for vertex in self.get_neighbors(current_vertex):
-                    s.push(vertex) 
+                    s.push(vertex)  
     def print_bs(self):
         print("bs")
     def dft_y_a(self, starting_vertex):
@@ -93,16 +93,26 @@ class Graph:
             if current_vertex not in visited:
                 # add it to visited
                 visited.add(current_vertex)
-                new_path = current_path + [current_vertex]
-                s.push(new_path)
         ### if len(g.get_neighbors(current_vertex)) == 0 append current_path to list of paths
-                if len(self.get_neighbors(current_vertex)) == 0:
-                    paths.append(current_path)
+            if len(self.get_neighbors(current_vertex)) == 0:
+                paths.append(current_path)
+                # print("current path with an end", paths)
+            else:
+                for neighbor in self.get_neighbors(current_vertex):
+                    if neighbor not in visited:
+                        visited.add(neighbor)
+                        new_path = current_path + [neighbor]
+                        s.push(new_path)
         # filter list of paths by greatest length
-        filteredbylength = filter(paths, lambda x: len(x) == max(paths, lambda x: len(x)))
-        print(filteredbylength)
+        oldest_ancestors = [x for x in paths if len(x) == max([len(x) for x in paths])]
         # filter list of paths by least path[-1]
-        # return filtered list
+        if len(oldest_ancestors) == 1 and len(oldest_ancestors[0]) == 1:
+            return_value = -1
+            return return_value
+        else:
+            oldest_ancestor = min([x[-1] for x in oldest_ancestors])
+        # return (youngest) oldest ancestor 
+            return oldest_ancestor
     def dft_recursive_utils(self, v, visited):
         # add a the vertex to the visited set and print it
         visited[v[-1]] = True
@@ -275,4 +285,3 @@ if __name__ == '__main__':
     '''
     # print(graph.dfs(1, 6))
     print(graph.dfs_recursive(1, 6))
-    print(dir(Graph))
