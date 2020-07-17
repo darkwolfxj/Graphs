@@ -1,6 +1,7 @@
 from util import Stack, Queue
 import random
 from itertools import permutations
+import time
 class User:
     def __init__(self, name):
         self.name = name
@@ -16,12 +17,15 @@ class SocialGraph:
         Creates a bi-directional friendship
         """
         if user_id == friend_id:
-            print("WARNING: You cannot be friends with yourself")
+            # print("WARNING: Cannot be friends with yourself!")
+            return False
         elif friend_id in self.friendships[user_id] or user_id in self.friendships[friend_id]:
-            print("WARNING: Friendship already exists")
+            # print("WARNING: Friendship already exists")
+            return False
         else:
             self.friendships[user_id].add(friend_id)
             self.friendships[friend_id].add(user_id)
+            return True
 
     def add_user(self, name):
         """
@@ -31,7 +35,21 @@ class SocialGraph:
         self.users[self.last_id] = User(name)
         self.friendships[self.last_id] = set()
 
+    def populate_graph(self, num_users, avg_friendships):
+        """
+        Takes a number of users and an average number of friendships
+        as arguments
 
+        Creates that number of users and a randomly distributed friendships
+        between those users.
+
+        The number of users must be greater than the average number of friendships.
+        """
+        # Reset graph
+        self.last_id = 0
+        self.users = {}
+        self.friendships = {}
+        # !!!! IMPLEMENT ME
         # Add users
         # create an empty user_id list
         users = []        
@@ -136,7 +154,7 @@ class SocialGraph:
                 for j in i:
                     if j not in extended_network:
                         extended_network.append(j)
-        print("extended network", extended_network)
+        # print("extended network", extended_network)
         all_extended_network_paths = []
         for friend in extended_network:
             all_extended_network_paths.append(self.shortest_path(user_id, friend))
@@ -145,13 +163,34 @@ class SocialGraph:
                 visited[extended_network[-1]] = extended_network
             # print(extended_network_path)
             pass
-        print(all_extended_network_paths)
+        # print(all_extended_network_paths)
         return visited
-        
+    
+    def linear_populate_graph(self, num_users, avg_friendships):
+        generated_friendships = 0
+        for user in range(num_users + 1):
+            self.add_user(user)
+        while generated_friendships < num_users * avg_friendships // 2:
+            if self.add_friendship(random.randint(1, self.last_id), random.randint(1, self.last_id)):
+                generated_friendships += 2
 
 if __name__ == '__main__':
     sg = SocialGraph()
-    sg.populate_graph(10, 2)
-    print(sg.friendships)
+    num_users = 5000
+    avg_friendships = 2
+    start_time = time.time()
+    sg.populate_graph(num_users, avg_friendships)
+    end_time = time.time()
+    print("finished")
+    print(end_time - start_time)
+    start_time = time.time()
+    sg.linear_populate_graph(num_users, avg_friendships)
+    end_time = time.time()
+    print("finished again")
+    print(end_time - start_time)
+    # print(sg.friendships)
     connections = sg.get_all_social_paths(1)
-    print(connections)
+    # print(connections)
+    
+    avg_deg_of_sep = sum([len(connections[connection]) for connection in connections if len(connections[connection]) != 1])/len(connections)
+    print(avg_deg_of_sep)
